@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 //const DATA = AsyncStorage.getItem('test')
@@ -16,10 +19,10 @@ import {
 
 
 export default function App() {
-  // const items = await AsyncStorage.getItem('test');
-  // const output = JSON.parse(items).list.map(obj => <Text>{obj.id}</Text>)
-
+  console.disableYellowBox = true;
   const [list, setList] = useState([]);
+  const [text, setText] = useState('');
+
   const getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
@@ -89,25 +92,39 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        style={styles.spacing}
-        onPress={() => saveData(`id -> ${Math.random()}`)}>
-        <Text>CLICK TO SAVE RANDOM</Text>
-      </TouchableOpacity>
+      <SafeAreaView style={styles.container} >
+        <TouchableOpacity
+          style={styles.spacing}
+          onPress={() => saveData(`id -> ${Math.ceil(Math.random() * 1000000)}`)}>
+          <Text>CLICK TO SAVE RANDOM</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.spacing}
-        onPress={clearStorage}>
-        <Text>CLEAR LIST</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.spacing}
+          onPress={clearStorage}>
+          <Text>CLEAR LIST</Text>
+        </TouchableOpacity>
 
-      <FlatList
-        data={list}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
+        <Text style={{ marginVertical: 10 }}> ENTER CUSTOM ID: </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={text => setText(text)} />
+
+        <TouchableOpacity
+          style={styles.spacing}
+          onPress={() => {
+            console.log(text)
+            saveData(`id -> ${text}`)
+          }}>
+          <Text>SAVE CUSTOM</Text>
+        </TouchableOpacity>
+
+        <FlatList
+          data={list}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
+      </SafeAreaView>
   );
 }
 
@@ -115,7 +132,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%', 
+    width: '100%',
     //backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -132,6 +149,19 @@ const styles = StyleSheet.create({
   },
 
   spacing: {
-    marginVertical: 25
+    marginVertical: 25,
+    backgroundColor: '#ccc',
+    height: 50,
+    width: '48%',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15
+  },
+
+  input: {
+    width: '70%',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1
   }
 });
